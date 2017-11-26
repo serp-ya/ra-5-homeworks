@@ -57,10 +57,6 @@ function Calendar(data) {
 
   const daysInPreviousMonth = new Date(currentYear, currentNumberOfMonth - 1).getDaysInMonth();
 
-  window.dada = date;
-  window.dada.currentYear = currentYear;
-  window.dada.currentNumberOfMonth = currentNumberOfMonth;
-
   const dateDetail = (
     <div className="ui-datepicker-material-header">
       <div className="ui-datepicker-material-day">{daysNames[currentDayOfWeek]}</div>
