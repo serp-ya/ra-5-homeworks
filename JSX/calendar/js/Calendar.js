@@ -1,8 +1,3 @@
-// Функция рассчёта количества дней в месяце
-Date.prototype.getDaysInMonth = function() {
-  return 33 - new Date(this.getFullYear(), this.getMonth(), 33).getDate();
-};
-
 const daysNames = [
   'Воскресенье',
   'Понедельник',
@@ -44,18 +39,18 @@ const monthsNamesGenitive = [
 ];
 
 
-function Calendar(data) {
-  const { date } = data;
+function Calendar(props) {
+  const { date } = props;
   const currentYear = date.getFullYear();
   const currentNumberOfMonth = date.getMonth();
-  const daysInCurrentMonth = date.getDaysInMonth();
+  const daysInCurrentMonth = getDaysInMonth(date);
   const currentDayOfMonth = date.getDate();
   const currentDayOfWeek = date.getDay();
   
   const numberOfFirstDayInCurrentMonth = new Date(currentYear, currentNumberOfMonth).getDay();
   const firstDayOfCurrentMonthIsMonday = (numberOfFirstDayInCurrentMonth === 1) ? true : false;
 
-  const daysInPreviousMonth = new Date(currentYear, currentNumberOfMonth - 1).getDaysInMonth();
+  const daysInPreviousMonth = getDaysInMonth(new Date(currentYear, currentNumberOfMonth - 1));
 
   const dateDetail = (
     <div className="ui-datepicker-material-header">
@@ -104,45 +99,49 @@ function Calendar(data) {
   );
   
   const calendarRows = (function () {
+    let daysId = 1;
     const rows = [];
     let numOfCycleCurrentDay = 1;
     
     if (!firstDayOfCurrentMonthIsMonday) {
       const row = [];
-      for (let i = numberOfFirstDayInCurrentMonth - 2; i >= 0; --i) {
-        row.push(<td className="ui-datepicker-other-month">{daysInPreviousMonth - i}</td>);
+      const daysOfPrevMonthNeed = (!numberOfFirstDayInCurrentMonth) ? 6 : (-1 + numberOfFirstDayInCurrentMonth);
+
+      for (let i = 0; i < daysOfPrevMonthNeed;) {
+        row.push(<td key={daysId++} className="ui-datepicker-other-month">{(daysInPreviousMonth - daysOfPrevMonthNeed) + ++i}</td>);
       }
 
       while(row.length < 7) {
         if (numOfCycleCurrentDay === currentDayOfMonth) {
-          row.push(<td className="ui-datepicker-today">{numOfCycleCurrentDay}</td>);
+          row.push(<td key={daysId++} className="ui-datepicker-today">{numOfCycleCurrentDay}</td>);
 
         } else {
-          row.push(<td>{numOfCycleCurrentDay}</td>);
+          row.push(<td key={daysId++}>{numOfCycleCurrentDay}</td>);
         }
         numOfCycleCurrentDay++;
       }
       rows.push(row);
     }
 
-    while(numOfCycleCurrentDay < daysInCurrentMonth) {
+    while(numOfCycleCurrentDay <= daysInCurrentMonth) {
       const row = [];
       let firstDaysOfNextMonth = 1;
       
       for (let i = 0; i < 7; i ++) {
 
         if (numOfCycleCurrentDay === currentDayOfMonth) {
-          row.push(<td className="ui-datepicker-today">{numOfCycleCurrentDay}</td>);
+          row.push(<td key={daysId++} className="ui-datepicker-today">{numOfCycleCurrentDay}</td>);
 
         } else if (numOfCycleCurrentDay > daysInCurrentMonth) {
-          row.push(<td className="ui-datepicker-other-month">{firstDaysOfNextMonth}</td>);
+          row.push(<td key={daysId++} className="ui-datepicker-other-month">{firstDaysOfNextMonth}</td>);
           firstDaysOfNextMonth++;
 
         } else {
-          row.push(<td>{numOfCycleCurrentDay}</td>);
+          row.push(<td key={daysId++}>{numOfCycleCurrentDay}</td>);
         }
         numOfCycleCurrentDay++;
-
+        
+        console.log('numOfCycleCurrentDay', numOfCycleCurrentDay);
       }
 
       rows.push(row);
@@ -168,4 +167,12 @@ function Calendar(data) {
       </table>
     </div>
   );
+}
+
+function getDaysInMonth(date) {
+  const currentYear = date.getFullYear();
+  const currentMonth = date.getMonth();
+  const daysInCurrentMonth = (new Date(currentYear, (currentMonth + 1), 0)).getDate();
+
+  return daysInCurrentMonth;
 }
