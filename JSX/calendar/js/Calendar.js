@@ -99,7 +99,7 @@ function Calendar(props) {
   );
   
   const calendarRows = (function () {
-    let daysId = 1;
+    let uniqueIds = 1;
     const rows = [];
     let numOfCycleCurrentDay = 1;
     
@@ -108,15 +108,15 @@ function Calendar(props) {
       const daysOfPrevMonthNeed = (!numberOfFirstDayInCurrentMonth) ? 6 : (-1 + numberOfFirstDayInCurrentMonth);
 
       for (let i = 0; i < daysOfPrevMonthNeed;) {
-        row.push(<td key={daysId++} className="ui-datepicker-other-month">{(daysInPreviousMonth - daysOfPrevMonthNeed) + ++i}</td>);
+        row.push(<td key={`td-${uniqueIds++}`} className="ui-datepicker-other-month">{(daysInPreviousMonth - daysOfPrevMonthNeed) + ++i}</td>);
       }
 
       while(row.length < 7) {
         if (numOfCycleCurrentDay === currentDayOfMonth) {
-          row.push(<td key={daysId++} className="ui-datepicker-today">{numOfCycleCurrentDay}</td>);
+          row.push(<td key={`td-${uniqueIds++}`} className="ui-datepicker-today">{numOfCycleCurrentDay}</td>);
 
         } else {
-          row.push(<td key={daysId++}>{numOfCycleCurrentDay}</td>);
+          row.push(<td key={`td-${uniqueIds++}`}>{numOfCycleCurrentDay}</td>);
         }
         numOfCycleCurrentDay++;
       }
@@ -130,24 +130,22 @@ function Calendar(props) {
       for (let i = 0; i < 7; i ++) {
 
         if (numOfCycleCurrentDay === currentDayOfMonth) {
-          row.push(<td key={daysId++} className="ui-datepicker-today">{numOfCycleCurrentDay}</td>);
+          row.push(<td key={`td-${uniqueIds++}`} className="ui-datepicker-today">{numOfCycleCurrentDay}</td>);
 
         } else if (numOfCycleCurrentDay > daysInCurrentMonth) {
-          row.push(<td key={daysId++} className="ui-datepicker-other-month">{firstDaysOfNextMonth}</td>);
+          row.push(<td key={`td-${uniqueIds++}`} className="ui-datepicker-other-month">{firstDaysOfNextMonth}</td>);
           firstDaysOfNextMonth++;
 
         } else {
-          row.push(<td key={daysId++}>{numOfCycleCurrentDay}</td>);
+          row.push(<td key={`td-${uniqueIds++}`}>{numOfCycleCurrentDay}</td>);
         }
         numOfCycleCurrentDay++;
-        
-        console.log('numOfCycleCurrentDay', numOfCycleCurrentDay);
       }
 
       rows.push(row);
     }
 
-    return rows.map(row => <tr>{row}</tr>);
+    return rows.map(row => <tr key={`tr-${uniqueIds++}`}>{row}</tr>);
   })();
 
   const calendarBody = (
